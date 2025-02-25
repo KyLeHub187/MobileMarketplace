@@ -39,6 +39,8 @@
             this.pnlAll = new System.Windows.Forms.FlowLayoutPanel();
             this.button1 = new System.Windows.Forms.Button();
             this.btnSearch = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -74,10 +76,10 @@
             // 
             this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox2.Image = global::MobileMarketplace.Properties.Resources.account_icon_8;
-            this.pictureBox2.Location = new System.Drawing.Point(827, 35);
+            this.pictureBox2.Location = new System.Drawing.Point(840, 0);
             this.pictureBox2.Margin = new System.Windows.Forms.Padding(3, 15, 20, 2);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(39, 40);
+            this.pictureBox2.Size = new System.Drawing.Size(30, 30);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox2.TabIndex = 4;
             this.pictureBox2.TabStop = false;
@@ -99,7 +101,7 @@
             this.tbSearch.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.tbSearch.Depth = 0;
             this.tbSearch.HideSelection = true;
-            this.tbSearch.Location = new System.Drawing.Point(303, 22);
+            this.tbSearch.Location = new System.Drawing.Point(303, 15);
             this.tbSearch.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tbSearch.MaxLength = 32767;
             this.tbSearch.MouseState = MaterialSkin.MouseState.OUT;
@@ -111,7 +113,7 @@
             this.tbSearch.SelectionLength = 0;
             this.tbSearch.SelectionStart = 0;
             this.tbSearch.ShortcutsEnabled = true;
-            this.tbSearch.Size = new System.Drawing.Size(353, 47);
+            this.tbSearch.Size = new System.Drawing.Size(353, 45);
             this.tbSearch.TabIndex = 10;
             this.tbSearch.TabStop = false;
             this.tbSearch.Text = "Search Devices";
@@ -159,18 +161,40 @@
             // 
             // btnSearch
             // 
-            this.btnSearch.Location = new System.Drawing.Point(696, 35);
+            this.btnSearch.Location = new System.Drawing.Point(662, 24);
             this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(75, 23);
+            this.btnSearch.Size = new System.Drawing.Size(121, 30);
             this.btnSearch.TabIndex = 13;
             this.btnSearch.Text = "Search";
             this.btnSearch.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button2.Location = new System.Drawing.Point(0, 984);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(870, 23);
+            this.button2.TabIndex = 14;
+            this.button2.Text = "Previous";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // button3
+            // 
+            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button3.Location = new System.Drawing.Point(0, 1013);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(870, 23);
+            this.button3.TabIndex = 15;
+            this.button3.Text = "Next";
+            this.button3.UseVisualStyleBackColor = true;
             // 
             // HomePageControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
+            this.Controls.Add(this.button3);
+            this.Controls.Add(this.button2);
             this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.pnlAll);
@@ -184,7 +208,7 @@
             this.Controls.Add(this.lblWelcome);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "HomePageControl";
-            this.Size = new System.Drawing.Size(862, 1028);
+            this.Size = new System.Drawing.Size(870, 1040);
             this.Load += new System.EventHandler(this.HomePageControl_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -206,5 +230,7 @@
         private System.Windows.Forms.FlowLayoutPanel pnlAll;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button btnSearch;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
     }
 }

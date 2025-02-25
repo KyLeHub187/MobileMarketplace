@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using System.Drawing;
 using System.Data.SqlClient;
+using static System.ComponentModel.Design.ObjectSelectorEditor;
 
 namespace MobileMarketplace
 {
@@ -112,7 +113,6 @@ namespace MobileMarketplace
 
         private void btnListDevice_Click(object sender, EventArgs e)
         {
-            // Ensure all fields are filled
             if (string.IsNullOrWhiteSpace(tbModel.Text) ||
                 string.IsNullOrWhiteSpace(cmbBrand.Text) ||
                 string.IsNullOrWhiteSpace(cmbCondition.Text) ||
@@ -134,11 +134,19 @@ namespace MobileMarketplace
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(@"Server=KALI\SQLEXPRESS;Database=MobileMarketplace;User Id=sa;Password=Password123;"))
+                int newDeviceId;
+
+                Database db = new Database();
+                SqlConnection conn = new SqlConnection(db.ConnectionString);
+                
                 {
                     conn.Open();
-                    string query = @"INSERT INTO Devices (UserID, Name, Brand, Type, Model, Condition, Price, Description, DateAdded)
-                                     VALUES (@UserID, @Name, @Brand, @Type, @Model, @Condition, @Price, @Description, GETDATE())";
+
+                    // Insert the device and return the new ID
+                    string query = @"
+        INSERT INTO Devices (UserID, Name, Brand, Type, Model, Condition, Price, Description, DateAdded)
+        VALUES (@UserID, @Name, @Brand, @Type, @Model, @Condition, @Price, @Description, GETDATE());
+        SELECT SCOPE_IDENTITY();";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
@@ -151,26 +159,65 @@ namespace MobileMarketplace
                         cmd.Parameters.AddWithValue("@Price", price);
                         cmd.Parameters.AddWithValue("@Description", tbDescription.Text);
 
-                        cmd.ExecuteNonQuery();
+                        // ExecuteScalar returns the first column of the first row → our new DeviceID
+                        object result = cmd.ExecuteScalar();
+                        newDeviceId = Convert.ToInt32(result);
                     }
-                }
 
-                MessageBox.Show("Device listed successfully!", "Success",
+                    // Now insert images into DeviceImages for the newly inserted device
+                    InsertImagesForDevice(conn, newDeviceId);
+
+                    MessageBox.Show("Device listed successfully!", "Success",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                // Optionally clear the form
-                tbName.Clear();
-                tbModel.Clear();
-                cmbBrand.SelectedIndex = 0;
-                cmbType.SelectedIndex = 0;
-                cmbCondition.SelectedIndex = 0;
-                tbPrice.Clear();
-                tbDescription.Clear();
+                    tbName.Clear();
+                    tbModel.Clear();
+                    cmbBrand.SelectedIndex = 0;
+                    cmbType.SelectedIndex = 0;
+                    cmbCondition.SelectedIndex = 0;
+                    tbPrice.Clear();
+                    tbDescription.Clear();
+                    foreach (PictureBox pb in pictureBoxes)
+                    {
+                        pb.Image = null;
+                    }
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error listing device: {ex.Message}", "Database Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        private void InsertImagesForDevice(SqlConnection conn, int deviceId)
+        {
+            string insertImageSql = @"
+                INSERT INTO DeviceImages (DeviceID, ImageData, UploadDate)
+                VALUES (@DeviceID, @ImageData, GETDATE())";
+
+            foreach (PictureBox pb in pictureBoxes)
+            {
+                if (pb.Image != null)
+                {
+                    byte[] imageBytes = ConvertImageToBytes(pb.Image);
+
+                    using (SqlCommand cmd = new SqlCommand(insertImageSql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@DeviceID", deviceId);
+                        cmd.Parameters.AddWithValue("@ImageData", imageBytes);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+        }
+
+      
+        private byte[] ConvertImageToBytes(Image image)
+        {
+            using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
+            {
+                image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                return ms.ToArray();
             }
         }
     }

@@ -64,7 +64,13 @@ namespace MobileMarketplace
                     card.ProductClicked += (s, e) =>
                     {
                         var clickedCard = (ProductsCardControl)s;
-                      
+                        int clickedDeviceId = clickedCard.DeviceID;
+
+                        MainForm mainForm = (MainForm)this.FindForm();
+
+                        var detailsControl = new ProductDetailsControl(clickedDeviceId);
+
+                        mainForm.LoadControl(detailsControl);
                     };
 
                     pnlAll.Controls.Add(card);

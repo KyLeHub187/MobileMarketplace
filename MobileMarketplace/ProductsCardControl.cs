@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Data.SqlClient;
+using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -46,12 +48,37 @@ namespace MobileMarketplace
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error loading image: {ex.Message}",
-                                    "Image Load Error",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Warning);
+                    MessageBox.Show($"Error loading image from file: {ex.Message}", "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            else
+            {
+                // Query the database to load the image
+                LoadProductImage(deviceId);
+            }
+        }
+
+        private void LoadProductImage(int deviceId)
+        {
+            // Query to fetch the first image for the given device
+            string query = "SELECT TOP 1 ImageData FROM DeviceImages WHERE DeviceID = @DeviceID";
+            SqlParameter[] parameters = new SqlParameter[] {
+        new SqlParameter("@DeviceID", deviceId)
+    };
+
+            DataTable dt = new Database().ExecuteQuery(query, parameters);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                byte[] imageData = dt.Rows[0]["ImageData"] as byte[];
+                if (imageData != null && imageData.Length > 0)
+                {
+                    using (System.IO.MemoryStream ms = new System.IO.MemoryStream(imageData))
+                    {
+                        pictureBox.Image = Image.FromStream(ms);
+                    }
                 }
             }
         }
+
     }
 }

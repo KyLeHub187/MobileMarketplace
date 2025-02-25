@@ -10,6 +10,11 @@ namespace MobileMarketplace
     {
         private readonly string _connectionString = @"Server=.\SQLEXPRESS;Database=Mobilemarketplace;User Id=sa;Password=Password123;";
 
+        public string ConnectionString
+        {
+            get { return _connectionString; }
+        }
+
         // Function to retrieve data as DataTable
         public DataTable ExecuteQuery(string query, SqlParameter[] parameters = null)
         {
