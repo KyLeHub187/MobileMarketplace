@@ -1,0 +1,2269 @@
+==== Database.cs ====
+
+﻿using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Windows.Forms;
+
+namespace MobileMarketplace
+{
+    public class Database
+    {
+        private readonly string _connectionString = @"Server=.\SQLEXPRESS;Database=Mobilemarketplace;User Id=sa;Password=Password123;";
+
+        // Function to retrieve data as DataTable
+        public DataTable ExecuteQuery(string query, SqlParameter[] parameters = null)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        if (parameters != null)
+                        {
+                            cmd.Parameters.AddRange(parameters);
+                        }
+
+                        using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                        {
+                            DataTable result = new DataTable();
+                            adapter.Fill(result);
+
+                            // Debug: Show column names in a MessageBox
+                            if (result.Columns.Count == 0)
+                            {
+                                MessageBox.Show("Query returned no columns! Check SQL query.", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                         
+
+                            return result;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Database error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return null;
+                }
+            }
+        }
+
+
+
+        // Function to execute non-query commands (e.g., INSERT, UPDATE, DELETE)
+        public void ExecuteNonQuery(string query, SqlParameter[] parameters = null)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    if (parameters != null)
+                    {
+                        cmd.Parameters.AddRange(parameters);
+                    }
+
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+    }
+}
+
+
+==== Form1.cs ====
+
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace MobileMarketplace
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+    }
+}
+
+
+==== Form1.Designer.cs ====
+
+﻿namespace MobileMarketplace
+{
+    partial class Form1
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.components = new System.ComponentModel.Container();
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Text = "Form1";
+        }
+
+        #endregion
+    }
+}
+
+
+
+==== Home.cs ====
+
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace MobileMarketplace
+{
+    public partial class Home : UserControl
+    {
+        public Home()
+        {
+            InitializeComponent();
+        }
+    }
+}
+
+
+==== Home.Designer.cs ====
+
+﻿namespace MobileMarketplace
+{
+    partial class Home
+    {
+        /// <summary> 
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary> 
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Component Designer generated code
+
+        /// <summary> 
+        /// Required method for Designer support - do not modify 
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            components = new System.ComponentModel.Container();
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+        }
+
+        #endregion
+    }
+}
+
+
+==== HomeControl.cs ====
+
+﻿using System.Drawing;
+using System.Windows.Forms;
+using System;
+
+namespace MobileMarketplace
+{
+
+    public partial class HomeControl : UserControl
+    {
+        private Panel searchPanel;
+        private Panel quickActionsPanel;
+        private Panel featuredPhonesPanel;
+        private Panel recentListingsPanel;
+        private Label welcomeLabel;
+
+        public HomeControl()
+        {
+            InitializeComponent();
+            SetupHomeControl();
+        }
+
+        private void SetupHomeControl()
+        {
+            this.BackColor = Color.WhiteSmoke;
+            this.Padding = new Padding(20);
+            this.AutoScroll = true;
+
+            // Welcome Section with User Info
+            CreateWelcomeSection();
+
+            // Quick Actions (Buy, Sell, Chat)
+            CreateQuickActionsSection();
+
+            // Search Section
+            CreateSearchSection();
+
+            // Featured Phones Section
+            CreateFeaturedPhonesSection();
+
+            // Recent Listings Section
+            CreateRecentListingsSection();
+        }
+
+        private void CreateWelcomeSection()
+        {
+            welcomeLabel = new Label
+            {
+                Text = "Welcome to Mobile Marketplace",
+                Font = new Font("Segoe UI", 20, FontStyle.Bold),
+                ForeColor = Color.FromArgb(51, 51, 51),
+                AutoSize = true,
+                Location = new Point(20, 20)
+            };
+
+            this.Controls.Add(welcomeLabel);
+        }
+
+        private void CreateQuickActionsSection()
+        {
+            quickActionsPanel = new Panel
+            {
+                Location = new Point(20, welcomeLabel.Bottom + 20),
+                Width = this.Width - 40,
+                Height = 100,
+                BackColor = Color.Transparent
+            };
+
+            var buttonWidth = (quickActionsPanel.Width - 60) / 3;
+
+            // Buy Phones Button
+            var buyButton = CreateActionButton("Buy Phones", "Browse available phones", 0, buttonWidth);
+            buyButton.Click += (s, e) => { /* Handle buy action */ };
+
+            // Sell Phone Button
+            var sellButton = CreateActionButton("Sell Phone", "List your phone for sale", 1, buttonWidth);
+            sellButton.Click += (s, e) => { /* Handle sell action */ };
+
+            // Messages Button
+            var chatButton = CreateActionButton("Messages", "Chat with buyers/sellers", 2, buttonWidth);
+            chatButton.Click += (s, e) => { /* Handle chat action */ };
+
+            quickActionsPanel.Controls.AddRange(new Control[] { buyButton, sellButton, chatButton });
+            this.Controls.Add(quickActionsPanel);
+        }
+
+        private Button CreateActionButton(string title, string description, int index, int width)
+        {
+            var button = new Button
+            {
+                Width = width,
+                Height = 80,
+                Location = new Point(index * (width + 20), 10),
+                BackColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                TextAlign = ContentAlignment.TopLeft,
+                Padding = new Padding(15, 10, 15, 10)
+            };
+
+            button.Text = $"{title}\n{description}";
+            button.FlatAppearance.BorderColor = Color.FromArgb(224, 224, 224);
+            return button;
+        }
+
+        private void CreateSearchSection()
+        {
+            searchPanel = new Panel
+            {
+                Height = 60,
+                BackColor = Color.White,
+                Padding = new Padding(10)
+            };
+
+            var searchBox = new TextBox
+            {
+                Width = searchPanel.Width - 140,
+                Height = 30,
+                Location = new Point(10, 15),
+                Font = new Font("Segoe UI", 12),
+                Text = "Search phones by brand, model, or features...",
+                ForeColor = Color.Gray
+            };
+
+            // Add focus events for placeholder behavior
+            searchBox.GotFocus += (s, e) =>
+            {
+                if (searchBox.Text == "Search phones by brand, model, or features...")
+                {
+                    searchBox.Text = "";
+                    searchBox.ForeColor = Color.Black;
+                }
+            };
+
+            searchBox.LostFocus += (s, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(searchBox.Text))
+                {
+                    searchBox.Text = "Search phones by brand, model, or features...";
+                    searchBox.ForeColor = Color.Gray;
+                }
+            };
+
+            var searchButton = new Button
+            {
+                Text = "Search",
+                Width = 100,
+                Height = 30,
+                Location = new Point(searchBox.Right + 10, 15),
+                BackColor = Color.FromArgb(0, 120, 212),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            searchButton.FlatAppearance.BorderSize = 0;
+
+            searchPanel.Controls.AddRange(new Control[] { searchBox, searchButton });
+            this.Controls.Add(searchPanel);
+        }
+
+        private void CreateRecentListingsSection()
+        {
+            var recentLabel = new Label
+            {
+                Text = "Recent Listings",
+                Font = new Font("Segoe UI Semibold", 16),
+                AutoSize = true,
+                Location = new Point(20, featuredPhonesPanel.Bottom + 20)
+            };
+
+            recentListingsPanel = new Panel
+            {
+                Location = new Point(20, recentLabel.Bottom + 10),
+                Width = this.Width - 40,
+                Height = 300,
+                BackColor = Color.White,
+                AutoScroll = true
+            };
+
+            CreatePhoneCards(recentListingsPanel, 4);
+            this.Controls.AddRange(new Control[] { recentLabel, recentListingsPanel });
+        }
+
+        private void CreatePhoneCards(Panel container, int count)
+        {
+            int cardWidth = 220;
+            int cardHeight = 280;
+            int spacing = 20;
+
+            string[] samplePhones = { "iPhone 13", "Samsung S21", "Google Pixel 6", "OnePlus 9" };
+            string[] conditions = { "Like New", "Excellent", "Good", "Fair" };
+
+            for (int i = 0; i < count; i++)
+            {
+                var phoneCard = new Panel
+                {
+                    Width = cardWidth,
+                    Height = cardHeight,
+                    Location = new Point(i * (cardWidth + spacing) + spacing, 10),
+                    BackColor = Color.White,
+                    BorderStyle = BorderStyle.FixedSingle
+                };
+
+                var imagePanel = new Panel
+                {
+                    Width = cardWidth - 2,
+                    Height = 160,
+                    BackColor = Color.LightGray,
+                    Dock = DockStyle.Top
+                };
+
+                var titleLabel = new Label
+                {
+                    Text = samplePhones[i % samplePhones.Length],
+                    Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                    Location = new Point(10, imagePanel.Bottom + 5),
+                    AutoSize = true
+                };
+
+                var conditionLabel = new Label
+                {
+                    Text = $"Condition: {conditions[i % conditions.Length]}",
+                    Font = new Font("Segoe UI", 10),
+                    Location = new Point(10, titleLabel.Bottom + 5),
+                    ForeColor = Color.Gray,
+                    AutoSize = true
+                };
+
+                var priceLabel = new Label
+                {
+                    Text = $"${new Random().Next(300, 1200):F2}", // Use new Random() instead of Random.Shared
+                    Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                    Location = new Point(10, conditionLabel.Bottom + 5),
+                    ForeColor = Color.FromArgb(0, 120, 212),
+                    AutoSize = true
+                };
+
+                var viewButton = new Button
+                {
+                    Text = "View Details",
+                    Width = cardWidth - 20,
+                    Height = 30,
+                    Location = new Point(10, priceLabel.Bottom + 10),
+                    BackColor = Color.FromArgb(0, 120, 212),
+                    ForeColor = Color.White,
+                    FlatStyle = FlatStyle.Flat
+                };
+                viewButton.FlatAppearance.BorderSize = 0;
+
+                phoneCard.Controls.AddRange(new Control[] {
+                imagePanel, titleLabel, conditionLabel, priceLabel, viewButton
+            });
+                container.Controls.Add(phoneCard);
+            }
+        }
+        private void CreateFeaturedPhonesSection()
+        {
+            var featuredLabel = new Label
+            {
+                Text = "Featured Phones",
+                Font = new Font("Segoe UI Semibold", 16),
+                AutoSize = true,
+                Location = new Point(20, searchPanel.Bottom + 20)
+            };
+
+            featuredPhonesPanel = new Panel
+            {
+                Location = new Point(20, featuredLabel.Bottom + 10),
+                Width = this.Width - 40,
+                Height = 300,
+                BackColor = Color.White,
+                AutoScroll = true
+            };
+
+            CreatePhoneCards(featuredPhonesPanel, 4);
+            this.Controls.AddRange(new Control[] { featuredLabel, featuredPhonesPanel });
+        }
+    }
+}
+
+==== HomeControl.Designer.cs ====
+
+﻿namespace MobileMarketplace
+{
+    partial class HomeControl
+    {
+        /// <summary> 
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary> 
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Component Designer generated code
+
+        /// <summary> 
+        /// Required method for Designer support - do not modify 
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // HomeControl
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Name = "HomeControl";
+            this.Size = new System.Drawing.Size(900, 900);
+            this.ResumeLayout(false);
+
+        }
+
+        #endregion
+    }
+}
+
+
+==== HomePageControl.cs ====
+
+﻿using System;
+using System.Windows.Forms;
+
+namespace MobileMarketplace
+{
+
+    public partial class HomePageControl : UserControl
+    {
+ 
+        public HomePageControl()
+        {
+            InitializeComponent();
+        }
+
+       
+        public HomePageControl(int userId) : this()
+        {
+        }
+
+        private void HomePageControl_Load(object sender, EventArgs e)
+        {
+           
+        }
+    }
+}
+
+
+==== HomePageControl.Designer.cs ====
+
+﻿namespace MobileMarketplace
+{
+    partial class HomePageControl
+    {
+        /// <summary> 
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary> 
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Component Designer generated code
+
+        /// <summary> 
+        /// Required method for Designer support - do not modify 
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.label1 = new System.Windows.Forms.Label();
+            this.SuspendLayout();
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 28.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(63, 22);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(718, 54);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "HOME PAGE (COMING SOON)";
+            // 
+            // HomePageControl
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.label1);
+            this.Name = "HomePageControl";
+            this.Size = new System.Drawing.Size(882, 825);
+            this.Load += new System.EventHandler(this.HomePageControl_Load);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Label label1;
+    }
+}
+
+
+==== LoginControl.cs ====
+
+﻿using System;
+using System.Windows.Forms;
+
+namespace MobileMarketplace
+{
+    public partial class LoginControl : UserControl
+    {
+        private MainForm mainForm;
+
+        public LoginControl(MainForm parentForm) // ✅ Receive MainForm reference
+        {
+            InitializeComponent();
+            mainForm = parentForm;
+        }
+
+        private void btnLogin_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string username = txtUsername.Text.Trim();
+                string password = txtPassword.Text.Trim();
+
+                int userId;
+                if (UserDatabase.VerifyCredentials(username, password, out userId))
+                {
+                    mainForm.CurrentUserId = userId;
+
+                    HomePageControl homePageControl = new HomePageControl(userId);
+                    mainForm.LoadControl(homePageControl);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+    }
+}
+
+==== LoginControl.Designer.cs ====
+
+﻿namespace MobileMarketplace
+{
+    partial class LoginControl
+    {
+        /// <summary> 
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary> 
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Component Designer generated code
+
+        /// <summary> 
+        /// Required method for Designer support - do not modify 
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.btnLogin = new System.Windows.Forms.Button();
+            this.btnRegister = new System.Windows.Forms.Button();
+            this.lblUsername = new System.Windows.Forms.Label();
+            this.lblPassword = new System.Windows.Forms.Label();
+            this.txtUsername = new System.Windows.Forms.TextBox();
+            this.txtPassword = new System.Windows.Forms.TextBox();
+            this.SuspendLayout();
+            // 
+            // btnLogin
+            // 
+            this.btnLogin.Location = new System.Drawing.Point(313, 341);
+            this.btnLogin.Name = "btnLogin";
+            this.btnLogin.Size = new System.Drawing.Size(75, 23);
+            this.btnLogin.TabIndex = 0;
+            this.btnLogin.Text = "Login";
+            this.btnLogin.UseVisualStyleBackColor = true;
+            this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
+            // 
+            // btnRegister
+            // 
+            this.btnRegister.Location = new System.Drawing.Point(436, 341);
+            this.btnRegister.Name = "btnRegister";
+            this.btnRegister.Size = new System.Drawing.Size(75, 23);
+            this.btnRegister.TabIndex = 1;
+            this.btnRegister.Text = "Register";
+            this.btnRegister.UseVisualStyleBackColor = true;
+            // 
+            // lblUsername
+            // 
+            this.lblUsername.AutoSize = true;
+            this.lblUsername.Location = new System.Drawing.Point(310, 249);
+            this.lblUsername.Name = "lblUsername";
+            this.lblUsername.Size = new System.Drawing.Size(70, 16);
+            this.lblUsername.TabIndex = 2;
+            this.lblUsername.Text = "Username";
+            // 
+            // lblPassword
+            // 
+            this.lblPassword.AutoSize = true;
+            this.lblPassword.Location = new System.Drawing.Point(310, 285);
+            this.lblPassword.Name = "lblPassword";
+            this.lblPassword.Size = new System.Drawing.Size(60, 16);
+            this.lblPassword.TabIndex = 3;
+            this.lblPassword.Text = "Pasword";
+            // 
+            // txtUsername
+            // 
+            this.txtUsername.Location = new System.Drawing.Point(386, 249);
+            this.txtUsername.Name = "txtUsername";
+            this.txtUsername.Size = new System.Drawing.Size(125, 22);
+            this.txtUsername.TabIndex = 4;
+            // 
+            // txtPassword
+            // 
+            this.txtPassword.Location = new System.Drawing.Point(386, 285);
+            this.txtPassword.Name = "txtPassword";
+            this.txtPassword.Size = new System.Drawing.Size(125, 22);
+            this.txtPassword.TabIndex = 5;
+            // 
+            // LoginControl
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.txtPassword);
+            this.Controls.Add(this.txtUsername);
+            this.Controls.Add(this.lblPassword);
+            this.Controls.Add(this.lblUsername);
+            this.Controls.Add(this.btnRegister);
+            this.Controls.Add(this.btnLogin);
+            this.Name = "LoginControl";
+            this.Size = new System.Drawing.Size(900, 900);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Button btnLogin;
+        private System.Windows.Forms.Button btnRegister;
+        private System.Windows.Forms.Label lblUsername;
+        private System.Windows.Forms.Label lblPassword;
+        private System.Windows.Forms.TextBox txtUsername;
+        private System.Windows.Forms.TextBox txtPassword;
+    }
+}
+
+
+==== MainForm.cs ====
+
+﻿using System;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace MobileMarketplace
+{
+    public partial class MainForm : Form
+    {
+        private int currentUserId;
+
+        public int CurrentUserId
+        {
+            get { return currentUserId; }
+            set { currentUserId = value; }
+        }
+
+        public MainForm()
+        {
+            InitializeComponent();
+            this.StartPosition = FormStartPosition.CenterScreen;
+
+            // Load HomePageControl by default
+            LoadControl(new LoginControl(this));
+        }
+
+        // Method to switch user controls dynamically
+        public void LoadControl(UserControl control)
+        {
+            mainPanel.Controls.Clear(); // Clear previous control
+            control.Dock = DockStyle.Fill;
+            mainPanel.Controls.Add(control);
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            HomeControl homeControl = new HomeControl();
+            homeControl.Dock = DockStyle.Fill;
+            mainPanel.Controls.Add(homeControl);
+        }
+
+        // MenuStrip Navigation Events
+        private void HomeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            mainPanel.Controls.Clear();
+            HomePageControl homeControl = new HomePageControl(CurrentUserId);
+            homeControl.Dock = DockStyle.Fill;
+            mainPanel.Controls.Add(homeControl);
+        }
+
+        private void ShopToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            mainPanel.Controls.Clear();
+            ProductsControl productsControl = new ProductsControl();
+            productsControl.Dock = DockStyle.Fill;
+            mainPanel.Controls.Add(productsControl);
+        }
+
+       
+
+        private void homeToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            LoadControl(new HomePageControl(CurrentUserId));
+        }
+
+  
+
+        private void allDevicesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ProductsControl productsControl = new ProductsControl();
+            productsControl.Dock = DockStyle.Fill;
+
+            mainPanel.Controls.Clear();  // Remove old control
+            mainPanel.Controls.Add(productsControl);
+        }
+
+        private void mainPanel_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void listDeviceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SellDeviceControl sellDeviceControl = new SellDeviceControl(CurrentUserId);
+            sellDeviceControl.Dock = DockStyle.Fill;
+
+            mainPanel.Controls.Clear();  // Remove old control
+            mainPanel.Controls.Add(sellDeviceControl);
+        }
+    }
+}
+
+
+==== MainForm.Designer.cs ====
+
+﻿namespace MobileMarketplace
+{
+    partial class MainForm
+    {
+        private System.ComponentModel.IContainer components = null;
+        private System.Windows.Forms.MenuStrip menuStrip;
+        private System.Windows.Forms.ToolStripMenuItem homeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem shopToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem listDeviceToolStripMenuItem;
+        private System.Windows.Forms.Panel mainPanel;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+        private void InitializeComponent()
+        {
+            this.menuStrip = new System.Windows.Forms.MenuStrip();
+            this.homeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.shopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.allDevicesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.listDeviceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mainPanel = new System.Windows.Forms.Panel();
+            this.menuStrip.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // menuStrip
+            // 
+            this.menuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.homeToolStripMenuItem,
+            this.shopToolStripMenuItem,
+            this.listDeviceToolStripMenuItem});
+            this.menuStrip.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip.Name = "menuStrip";
+            this.menuStrip.Size = new System.Drawing.Size(882, 28);
+            this.menuStrip.TabIndex = 0;
+            this.menuStrip.Text = "menuStrip";
+            // 
+            // homeToolStripMenuItem
+            // 
+            this.homeToolStripMenuItem.Name = "homeToolStripMenuItem";
+            this.homeToolStripMenuItem.Size = new System.Drawing.Size(64, 24);
+            this.homeToolStripMenuItem.Text = "Home";
+            this.homeToolStripMenuItem.Click += new System.EventHandler(this.HomeToolStripMenuItem_Click);
+            // 
+            // shopToolStripMenuItem
+            // 
+            this.shopToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.allDevicesToolStripMenuItem});
+            this.shopToolStripMenuItem.Name = "shopToolStripMenuItem";
+            this.shopToolStripMenuItem.Size = new System.Drawing.Size(57, 24);
+            this.shopToolStripMenuItem.Text = "Shop";
+            this.shopToolStripMenuItem.Click += new System.EventHandler(this.ShopToolStripMenuItem_Click);
+            // 
+            // allDevicesToolStripMenuItem
+            // 
+            this.allDevicesToolStripMenuItem.Name = "allDevicesToolStripMenuItem";
+            this.allDevicesToolStripMenuItem.Size = new System.Drawing.Size(165, 26);
+            this.allDevicesToolStripMenuItem.Text = "All Devices";
+            this.allDevicesToolStripMenuItem.Click += new System.EventHandler(this.allDevicesToolStripMenuItem_Click);
+            // 
+            // listDeviceToolStripMenuItem
+            // 
+            this.listDeviceToolStripMenuItem.Name = "listDeviceToolStripMenuItem";
+            this.listDeviceToolStripMenuItem.Size = new System.Drawing.Size(94, 24);
+            this.listDeviceToolStripMenuItem.Text = "List Device";
+            this.listDeviceToolStripMenuItem.Click += new System.EventHandler(this.listDeviceToolStripMenuItem_Click);
+            // 
+            // mainPanel
+            // 
+            this.mainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.mainPanel.Location = new System.Drawing.Point(0, 28);
+            this.mainPanel.Name = "mainPanel";
+            this.mainPanel.Size = new System.Drawing.Size(882, 825);
+            this.mainPanel.TabIndex = 1;
+            this.mainPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.mainPanel_Paint);
+            // 
+            // MainForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(882, 853);
+            this.Controls.Add(this.mainPanel);
+            this.Controls.Add(this.menuStrip);
+            this.MainMenuStrip = this.menuStrip;
+            this.Name = "MainForm";
+            this.Text = "Mobile Marketplace";
+            this.Load += new System.EventHandler(this.MainForm_Load);
+            this.menuStrip.ResumeLayout(false);
+            this.menuStrip.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+        #endregion
+
+        private System.Windows.Forms.ToolStripMenuItem allDevicesToolStripMenuItem;
+    }
+}
+
+
+==== ProductCardControl.cs ====
+
+﻿using System;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace MobileMarketplace
+{
+    public partial class ProductCardControl : UserControl
+    {
+        private PictureBox pictureBox;
+        private Label lblType;
+        private Label lblCondition;
+        private Label lblPrice;
+
+        public ProductCardControl(bool loadDevices = true) // ✅ Added constructor with 'bool'
+        {
+            InitializeComponent();
+
+            if (loadDevices) // Prevents infinite recursion
+            {
+                LoadLatestDevicesIntoPanel();
+            }
+        }
+
+
+        public void SetProductData(string deviceName, string deviceType, string condition, decimal price, string imageUrl = null)
+        {
+            lblName.Text = deviceName;
+            lblType.Text = $"Type: {deviceType}";
+            lblCondition.Text = $"Condition: {condition}";
+            lblPrice.Text = $"Price: ${price:F2}";
+
+            if (!string.IsNullOrEmpty(imageUrl))
+            {
+                try
+                {
+                    pictureBox.Image = Image.FromFile(imageUrl);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error loading image: {ex.Message}", "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+        }
+
+        private void InitializeComponent()
+        {
+            this.lblName = new System.Windows.Forms.Label();
+            this.pictureBox = new System.Windows.Forms.PictureBox();
+            this.lblType = new System.Windows.Forms.Label();
+            this.lblCondition = new System.Windows.Forms.Label();
+            this.lblPrice = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // lblName
+            // 
+            this.lblName.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Bold);
+            this.lblName.Location = new System.Drawing.Point(25, 105);
+            this.lblName.Name = "lblName";
+            this.lblName.Size = new System.Drawing.Size(100, 20);
+            this.lblName.TabIndex = 0;
+            this.lblName.Text = "Name";
+            this.lblName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // pictureBox
+            // 
+            this.pictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox.Location = new System.Drawing.Point(25, 5);
+            this.pictureBox.Name = "pictureBox";
+            this.pictureBox.Size = new System.Drawing.Size(100, 100);
+            this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox.TabIndex = 3;
+            this.pictureBox.TabStop = false;
+            // 
+            // lblType
+            // 
+            this.lblType.Location = new System.Drawing.Point(25, 125);
+            this.lblType.Name = "lblType";
+            this.lblType.Size = new System.Drawing.Size(100, 20);
+            this.lblType.TabIndex = 1;
+            this.lblType.Text = "Type";
+            this.lblType.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lblCondition
+            // 
+            this.lblCondition.AutoSize = true;
+            this.lblCondition.Location = new System.Drawing.Point(26, 145);
+            this.lblCondition.MaximumSize = new System.Drawing.Size(100, 0);
+            this.lblCondition.Name = "lblCondition";
+            this.lblCondition.Size = new System.Drawing.Size(96, 32);
+            this.lblCondition.TabIndex = 2;
+            this.lblCondition.Text = "Condition: New (in box)";
+            this.lblCondition.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lblPrice
+            // 
+            this.lblPrice.Location = new System.Drawing.Point(26, 177);
+            this.lblPrice.Name = "lblPrice";
+            this.lblPrice.Size = new System.Drawing.Size(100, 20);
+            this.lblPrice.TabIndex = 3;
+            this.lblPrice.Text = "Price";
+            this.lblPrice.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // ProductCardControl
+            // 
+            this.Controls.Add(this.lblName);
+            this.Controls.Add(this.lblType);
+            this.Controls.Add(this.lblCondition);
+            this.Controls.Add(this.lblPrice);
+            this.Controls.Add(this.pictureBox);
+            this.Name = "ProductCardControl";
+            this.Size = new System.Drawing.Size(150, 230);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+    }
+}
+
+
+
+==== ProductCardControl.Designer.cs ====
+
+﻿using System;
+using System.Data;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace MobileMarketplace
+{
+    public partial class ProductCardControl : UserControl
+    {
+        private FlowLayoutPanel flowLayoutPanel;
+
+        public ProductCardControl()
+        {
+            InitializeComponent();
+            SetupFlowLayoutPanel();
+
+            // Optionally, load devices immediately
+            LoadLatestDevicesIntoPanel();
+        }
+
+        private void ProductsControl_Load(object sender, EventArgs e)
+        {
+            // Or load devices here, if you prefer to do it on load event
+            LoadLatestDevicesIntoPanel();            
+        }
+
+        private void SetupFlowLayoutPanel()
+        {
+            flowLayoutPanel = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                AutoScroll = true,
+                WrapContents = true,
+                FlowDirection = FlowDirection.LeftToRight,
+                Padding = new Padding(10)
+            };
+            this.Controls.Add(flowLayoutPanel);
+        }
+
+
+        private void LoadLatestDevicesIntoPanel()
+        {
+            try
+            {
+                // Query to fetch the newest 12 devices from your Devices table
+                string query = @"
+            SELECT TOP 12
+                   [Name],
+                   [Type],
+                   [Condition],
+                   Price
+            FROM Devices
+            ORDER BY DateAdded DESC;
+        ";
+
+                var db = new Database();
+                DataTable dt = db.ExecuteQuery(query);
+
+                // Clear any existing controls to avoid duplicates
+                flowLayoutPanel.Controls.Clear();
+
+                // Loop through each row in the returned DataTable
+                foreach (DataRow row in dt.Rows)
+                {
+                    string deviceName = row["Name"]?.ToString() ?? "";
+                    string deviceType = row["Type"]?.ToString() ?? "";
+                    string condition = row["Condition"]?.ToString() ?? "";
+                    decimal price = row["Price"] != DBNull.Value
+                                    ? Convert.ToDecimal(row["Price"])
+                                    : 0;
+
+                    // Create a new product card
+                    var card = new ProductCardControl();
+
+
+                    // Populate the card with the device's data
+                    card.SetProductData(deviceName, deviceType, condition, price, null);
+
+                    // Add the card to the FlowLayoutPanel
+                    flowLayoutPanel.Controls.Add(card);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading devices: " + ex.Message);
+            }
+        }
+
+        private Label lblName;
+    }
+}
+
+==== ProductsControl.cs ====
+
+﻿using System;
+using System.Data;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace MobileMarketplace
+{
+    public partial class ProductsControl : UserControl
+    {
+        private int currentPage = 1; // Current page number
+        private int pageSize = 12;  // Number of devices per page
+        private int totalDevices = 0; // Total count of devices
+
+        private Button btnPreviousPC;
+        private Button btnNextPC;
+
+        public ProductsControl()
+        {
+            InitializeComponent();
+            LoadTotalDevices();
+            LoadDevicesByPage();
+            InitializeDropdowns();
+            SetupPaginationButtons();
+        }
+
+        private void ProductsControl_Load(object sender, EventArgs e)
+        {
+            LoadDevicesByPage();
+        }
+
+        private void InitializeDropdowns()
+        {
+            cmbDevice.Items.Clear();
+            cmbDevice.Items.Add("Phone");
+            cmbDevice.Items.Add("Tablet");
+            cmbDevice.Items.Add("Laptop");
+
+            cmbPrice.Items.Clear();
+            cmbPrice.Items.Add("Under 100");
+            cmbPrice.Items.Add("100-250");
+            cmbPrice.Items.Add("250-500");
+            cmbPrice.Items.Add("500 Or More");
+
+            cmbCondition.Items.Clear();
+            cmbCondition.Items.Add("Parts");
+            cmbCondition.Items.Add("Used");
+            cmbCondition.Items.Add("New");
+            cmbCondition.Items.Add("New (In Box)");
+        }
+
+        private void SetupPaginationButtons()
+        {
+            // Previous Button
+            btnPreviousPC = new Button
+            {
+                Text = "Previous",
+                Enabled = false, // Initially disabled
+                Dock = DockStyle.Bottom
+            };
+            btnPreviousPC.Click += BtnPrevious_Click;
+            this.Controls.Add(btnPreviousPC);
+
+            // Next Button
+            btnNextPC = new Button
+            {
+                Text = "Next",
+                Dock = DockStyle.Bottom
+            };
+            btnNextPC.Click += BtnNext_Click;
+            this.Controls.Add(btnNextPC);
+        }
+
+        private void BtnPrevious_Click(object sender, EventArgs e)
+        {
+            if (currentPage > 1)
+            {
+                currentPage--;
+                LoadDevicesByPage();
+            }
+        }
+
+        private void BtnNext_Click(object sender, EventArgs e)
+        {
+            if ((currentPage * pageSize) < totalDevices)
+            {
+                currentPage++;
+                LoadDevicesByPage();
+            }
+        }
+
+        private void LoadTotalDevices()
+        {
+            try
+            {
+                string query = "SELECT COUNT(*) FROM Devices";
+                object result = UserDatabase.ExecuteScalar(query); // ✅ Use `UserDatabase` instead of `Database`
+
+                if (result != null && int.TryParse(result.ToString(), out int count))
+                {
+                    totalDevices = count;
+                }
+                else
+                {
+                    totalDevices = 0; // Default to 0 if conversion fails
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error retrieving device count: " + ex.Message);
+            }
+        }
+
+
+
+        private void LoadDevicesByPage()
+        {
+            try
+            {
+                int offset = (currentPage - 1) * pageSize;
+                string query = $@"
+            SELECT [Name], [Type], [Condition], Price
+            FROM Devices
+            ORDER BY DateAdded DESC
+            OFFSET {offset} ROWS FETCH NEXT {pageSize} ROWS ONLY;";
+
+                DataTable dt = UserDatabase.ExecuteQuery(query); // ✅ Call method directly from the static class
+                                                                 // ✅ Call method directly from the static class
+
+                flowLayoutPanel.Controls.Clear();
+
+                foreach (DataRow row in dt.Rows) // ✅ Now `dt` exists
+                {
+                    string deviceName = row["Name"]?.ToString() ?? "";
+                    string deviceType = row["Type"]?.ToString() ?? "";
+                    string condition = row["Condition"]?.ToString() ?? "";
+                    decimal price = row["Price"] != DBNull.Value ? Convert.ToDecimal(row["Price"]) : 0;
+
+                    var card = new ProductCardControl(false);
+                    card.SetProductData(deviceName, deviceType, condition, price, null);
+                    flowLayoutPanel.Controls.Add(card);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading devices: " + ex.Message);
+            }
+        }
+
+    }
+}
+
+
+==== ProductsControl.Designer.cs ====
+
+﻿namespace MobileMarketplace
+{
+    partial class ProductsControl
+    {
+        /// <summary> 
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+        private System.Windows.Forms.ComboBox cmbDevice;
+        private System.Windows.Forms.ComboBox cmbPrice;
+        private System.Windows.Forms.ComboBox cmbCondition;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel;
+
+        /// <summary> 
+        /// Clean up any resources being used.
+        /// </summary>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Component Designer generated code
+
+        private void InitializeComponent()
+        {
+            this.cmbDevice = new System.Windows.Forms.ComboBox();
+            this.cmbPrice = new System.Windows.Forms.ComboBox();
+            this.cmbCondition = new System.Windows.Forms.ComboBox();
+            this.flowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
+            this.SuspendLayout();
+            // 
+            // cmbDevice
+            // 
+            this.cmbDevice.FormattingEnabled = true;
+            this.cmbDevice.Location = new System.Drawing.Point(50, 20);
+            this.cmbDevice.Name = "cmbDevice";
+            this.cmbDevice.Size = new System.Drawing.Size(150, 24);
+            this.cmbDevice.TabIndex = 0;
+            // 
+            // cmbPrice
+            // 
+            this.cmbPrice.FormattingEnabled = true;
+            this.cmbPrice.Location = new System.Drawing.Point(220, 20);
+            this.cmbPrice.Name = "cmbPrice";
+            this.cmbPrice.Size = new System.Drawing.Size(150, 24);
+            this.cmbPrice.TabIndex = 1;
+            // 
+            // cmbCondition
+            // 
+            this.cmbCondition.FormattingEnabled = true;
+            this.cmbCondition.Location = new System.Drawing.Point(390, 20);
+            this.cmbCondition.Name = "cmbCondition";
+            this.cmbCondition.Size = new System.Drawing.Size(150, 24);
+            this.cmbCondition.TabIndex = 2;
+            // 
+            // flowLayoutPanel
+            // 
+            this.flowLayoutPanel.AutoScroll = true;
+            this.flowLayoutPanel.Location = new System.Drawing.Point(50, 60);
+            this.flowLayoutPanel.Name = "flowLayoutPanel";
+            this.flowLayoutPanel.Size = new System.Drawing.Size(794, 664);
+            this.flowLayoutPanel.TabIndex = 3;
+            // 
+            // ProductsControl
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.cmbDevice);
+            this.Controls.Add(this.cmbPrice);
+            this.Controls.Add(this.cmbCondition);
+            this.Controls.Add(this.flowLayoutPanel);
+            this.Name = "ProductsControl";
+            this.Size = new System.Drawing.Size(882, 825);
+            this.ResumeLayout(false);
+
+        }
+
+        #endregion
+    }
+}
+
+
+==== Program.cs ====
+
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace MobileMarketplace
+{
+    internal static class Program
+    {
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+        [STAThread]
+        static void Main()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new MainForm());
+        }
+    }
+}
+
+
+==== sellDevice.cs ====
+
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace MobileMarketplace
+{
+    public partial class sellDevice : UserControl
+    {
+        public sellDevice()
+        {
+            InitializeComponent();
+        }
+    }
+}
+
+
+==== sellDevice.Designer.cs ====
+
+﻿namespace MobileMarketplace
+{
+    partial class sellDevice
+    {
+        /// <summary> 
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary> 
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Component Designer generated code
+
+        /// <summary> 
+        /// Required method for Designer support - do not modify 
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            components = new System.ComponentModel.Container();
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+        }
+
+        #endregion
+    }
+}
+
+
+==== SellDeviceControl.cs ====
+
+﻿using System;
+using System.Windows.Forms;
+using System.Drawing;
+using System.Data.SqlClient;
+
+namespace MobileMarketplace
+{
+
+
+    public partial class SellDeviceControl : UserControl
+    {
+        private int _userId;  // Class-level field to store userId
+
+        // Constructor that takes userId as a parameter
+        public SellDeviceControl(int userId)
+        {
+            InitializeComponent();
+            _userId = userId;  // Assign the passed userId to the class-level field
+            LoadDevicesForUser();  // Call method to load devices
+            this.Dock = DockStyle.Fill;
+            this.AutoScroll = true;
+        }
+
+        private void LoadDevicesForUser()
+        {
+            // You can now use _userId to load devices specific to the user
+            // Example (assuming a method exists in the database class):
+            // var devices = Database.GetDevicesForUser(_userId);
+            // Display them in the control (e.g., in a ListView or DataGridView)
+
+            // Sample logic:
+            // MessageBox.Show($"Loading devices for user with ID: {_userId}");
+        }
+        private PictureBox[] pictureBoxes; // Declare the PictureBox array
+
+        private void ListDevicesControl_Load(object sender, EventArgs e)
+        {
+            pictureBoxes = new PictureBox[] { pictureBox1, pictureBox4, pictureBox5, pictureBox2, pictureBox6, pictureBox3 }; cmbBrand.Items.Add("Samsung");
+            cmbBrand.Items.Add("Apple");
+            cmbBrand.Items.Add("Xiaomi");
+            cmbBrand.Items.Add("Vivo");
+            cmbBrand.Items.Add("Transsion");
+            cmbBrand.Items.Add("Honor");
+            cmbBrand.Items.Add("Motorola");
+            cmbBrand.Items.Add("Realme");
+            cmbBrand.Items.Add("Huawei");
+
+            cmbBrand.Text = "Brand";
+
+            cmbCondition.Items.Add("New (in box)");
+            cmbCondition.Items.Add("Used (like new)");
+            cmbCondition.Items.Add("Fair");
+            cmbCondition.Items.Add("For Parts (mot working)");
+
+            cmbCondition.Text = "Condition";
+        }
+
+        private void UploadImageToPictureBox(PictureBox pictureBox)
+        {
+            // Create an OpenFileDialog to allow the user to select an image
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp";
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                // Load the selected image into the PictureBox
+                pictureBox.Image = Image.FromFile(openFileDialog.FileName);
+            }
+        }
+
+
+        private void btnUpload1_Click(object sender, EventArgs e)
+        {
+            UploadImageToPictureBox(pictureBox1);
+        }   
+
+        private void btnUpload3_Click(object sender, EventArgs e)
+        {
+            UploadImageToPictureBox(pictureBox3);
+        }
+
+        private void btnUpload4_Click(object sender, EventArgs e)
+        {
+            UploadImageToPictureBox(pictureBox4);
+        }
+
+        private void btnUpload5_Click(object sender, EventArgs e)
+        {
+            UploadImageToPictureBox(pictureBox5);
+        }
+
+        private void btnUpload6_Click(object sender, EventArgs e)
+        {
+            UploadImageToPictureBox(pictureBox6);
+        }
+
+        private void btnUpload2_Click_1(object sender, EventArgs e)
+        {
+            UploadImageToPictureBox(pictureBox2);
+        }
+
+        private void btnListDevice_Click(object sender, EventArgs e)
+        {
+            // Ensure all fields are filled
+            if (string.IsNullOrWhiteSpace(tbModel.Text) ||
+                string.IsNullOrWhiteSpace(cmbBrand.Text) ||
+                string.IsNullOrWhiteSpace(cmbCondition.Text) ||
+                string.IsNullOrWhiteSpace(tbPrice.Text) ||
+                string.IsNullOrWhiteSpace(tbDescription.Text))
+            {
+                MessageBox.Show("Please fill in all fields before listing the device.", "Missing Information",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Parse price
+            if (!decimal.TryParse(tbPrice.Text, out decimal price))
+            {
+                MessageBox.Show("Invalid price format.", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(@"Server=KALI\SQLEXPRESS;Database=MobileMarketplace;User Id=sa;Password=Password123;"))
+                {
+                    conn.Open();
+                    string query = @"INSERT INTO Devices (UserID, Brand, Model, Condition, Price, Description, DateAdded)
+                                     VALUES (@UserID, @Brand, @Model, @Condition, @Price, @Description, GETDATE())";
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@UserID", _userId);
+                        cmd.Parameters.AddWithValue("@Brand", cmbBrand.Text);
+                        cmd.Parameters.AddWithValue("@Model", tbModel.Text);
+                        cmd.Parameters.AddWithValue("@Condition", cmbCondition.Text);
+                        cmd.Parameters.AddWithValue("@Price", price);
+                        cmd.Parameters.AddWithValue("@Description", tbDescription.Text);
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                MessageBox.Show("Device listed successfully!", "Success",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // Optionally clear the form
+                tbModel.Clear();
+                cmbBrand.SelectedIndex = -1;
+                cmbCondition.SelectedIndex = -1;
+                tbPrice.Clear();
+                tbDescription.Clear();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error listing device: {ex.Message}", "Database Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+    }
+}
+
+
+==== SellDeviceControl.Designer.cs ====
+
+﻿namespace MobileMarketplace
+{
+    partial class SellDeviceControl
+    {
+        /// <summary> 
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        #region Component Designer generated code
+
+        /// <summary> 
+        /// Required method for Designer support - do not modify 
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.pictureBox4 = new System.Windows.Forms.PictureBox();
+            this.pictureBox5 = new System.Windows.Forms.PictureBox();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.pictureBox6 = new System.Windows.Forms.PictureBox();
+            this.pictureBox3 = new System.Windows.Forms.PictureBox();
+            this.lblModel = new System.Windows.Forms.Label();
+            this.lblBrand = new System.Windows.Forms.Label();
+            this.tbModel = new System.Windows.Forms.TextBox();
+            this.lblCondition = new System.Windows.Forms.Label();
+            this.lblDescription = new System.Windows.Forms.Label();
+            this.lblPrice = new System.Windows.Forms.Label();
+            this.cmbBrand = new System.Windows.Forms.ComboBox();
+            this.cmbCondition = new System.Windows.Forms.ComboBox();
+            this.tbPrice = new System.Windows.Forms.TextBox();
+            this.tbDescription = new System.Windows.Forms.TextBox();
+            this.btnListDevice = new System.Windows.Forms.Button();
+            this.btnUpload1 = new System.Windows.Forms.Button();
+            this.btnUpload6 = new System.Windows.Forms.Button();
+            this.btnUpload5 = new System.Windows.Forms.Button();
+            this.btnUpload4 = new System.Windows.Forms.Button();
+            this.btnUpload3 = new System.Windows.Forms.Button();
+            this.btnUpload2 = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox1.Location = new System.Drawing.Point(27, 62);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Padding = new System.Windows.Forms.Padding(0, 0, 67, 0);
+            this.pictureBox1.Size = new System.Drawing.Size(159, 147);
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
+            // 
+            // pictureBox4
+            // 
+            this.pictureBox4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox4.Location = new System.Drawing.Point(27, 271);
+            this.pictureBox4.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pictureBox4.Name = "pictureBox4";
+            this.pictureBox4.Padding = new System.Windows.Forms.Padding(0, 0, 67, 0);
+            this.pictureBox4.Size = new System.Drawing.Size(159, 147);
+            this.pictureBox4.TabIndex = 1;
+            this.pictureBox4.TabStop = false;
+            // 
+            // pictureBox5
+            // 
+            this.pictureBox5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox5.Location = new System.Drawing.Point(267, 271);
+            this.pictureBox5.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pictureBox5.Name = "pictureBox5";
+            this.pictureBox5.Size = new System.Drawing.Size(159, 147);
+            this.pictureBox5.TabIndex = 3;
+            this.pictureBox5.TabStop = false;
+            // 
+            // pictureBox2
+            // 
+            this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox2.Location = new System.Drawing.Point(267, 62);
+            this.pictureBox2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(159, 147);
+            this.pictureBox2.TabIndex = 2;
+            this.pictureBox2.TabStop = false;
+            // 
+            // pictureBox6
+            // 
+            this.pictureBox6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox6.Location = new System.Drawing.Point(507, 271);
+            this.pictureBox6.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pictureBox6.Name = "pictureBox6";
+            this.pictureBox6.Size = new System.Drawing.Size(159, 147);
+            this.pictureBox6.TabIndex = 7;
+            this.pictureBox6.TabStop = false;
+            // 
+            // pictureBox3
+            // 
+            this.pictureBox3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox3.Location = new System.Drawing.Point(507, 62);
+            this.pictureBox3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pictureBox3.Name = "pictureBox3";
+            this.pictureBox3.Size = new System.Drawing.Size(159, 147);
+            this.pictureBox3.TabIndex = 6;
+            this.pictureBox3.TabStop = false;
+            // 
+            // lblModel
+            // 
+            this.lblModel.AutoSize = true;
+            this.lblModel.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblModel.Location = new System.Drawing.Point(27, 539);
+            this.lblModel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblModel.Name = "lblModel";
+            this.lblModel.Size = new System.Drawing.Size(119, 23);
+            this.lblModel.TabIndex = 9;
+            this.lblModel.Text = "Device Model:";
+            // 
+            // lblBrand
+            // 
+            this.lblBrand.AutoSize = true;
+            this.lblBrand.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblBrand.Location = new System.Drawing.Point(27, 588);
+            this.lblBrand.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblBrand.Name = "lblBrand";
+            this.lblBrand.Size = new System.Drawing.Size(59, 23);
+            this.lblBrand.TabIndex = 10;
+            this.lblBrand.Text = "Brand:";
+            // 
+            // tbModel
+            // 
+            this.tbModel.Location = new System.Drawing.Point(267, 539);
+            this.tbModel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbModel.Name = "tbModel";
+            this.tbModel.Size = new System.Drawing.Size(332, 22);
+            this.tbModel.TabIndex = 11;
+            // 
+            // lblCondition
+            // 
+            this.lblCondition.AutoSize = true;
+            this.lblCondition.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCondition.Location = new System.Drawing.Point(27, 638);
+            this.lblCondition.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblCondition.Name = "lblCondition";
+            this.lblCondition.Size = new System.Drawing.Size(89, 23);
+            this.lblCondition.TabIndex = 12;
+            this.lblCondition.Text = "Condition:";
+            // 
+            // lblDescription
+            // 
+            this.lblDescription.AutoSize = true;
+            this.lblDescription.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDescription.Location = new System.Drawing.Point(27, 736);
+            this.lblDescription.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblDescription.Name = "lblDescription";
+            this.lblDescription.Size = new System.Drawing.Size(100, 23);
+            this.lblDescription.TabIndex = 14;
+            this.lblDescription.Text = "Description:";
+            // 
+            // lblPrice
+            // 
+            this.lblPrice.AutoSize = true;
+            this.lblPrice.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPrice.Location = new System.Drawing.Point(27, 687);
+            this.lblPrice.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblPrice.Name = "lblPrice";
+            this.lblPrice.Size = new System.Drawing.Size(77, 23);
+            this.lblPrice.TabIndex = 13;
+            this.lblPrice.Text = "Price ($):";
+            // 
+            // cmbBrand
+            // 
+            this.cmbBrand.FormattingEnabled = true;
+            this.cmbBrand.Location = new System.Drawing.Point(267, 588);
+            this.cmbBrand.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cmbBrand.Name = "cmbBrand";
+            this.cmbBrand.Size = new System.Drawing.Size(332, 24);
+            this.cmbBrand.TabIndex = 15;
+            // 
+            // cmbCondition
+            // 
+            this.cmbCondition.FormattingEnabled = true;
+            this.cmbCondition.Location = new System.Drawing.Point(267, 638);
+            this.cmbCondition.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cmbCondition.Name = "cmbCondition";
+            this.cmbCondition.Size = new System.Drawing.Size(332, 24);
+            this.cmbCondition.TabIndex = 16;
+            // 
+            // tbPrice
+            // 
+            this.tbPrice.Location = new System.Drawing.Point(267, 687);
+            this.tbPrice.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbPrice.Name = "tbPrice";
+            this.tbPrice.Size = new System.Drawing.Size(159, 22);
+            this.tbPrice.TabIndex = 17;
+            // 
+            // tbDescription
+            // 
+            this.tbDescription.Location = new System.Drawing.Point(267, 736);
+            this.tbDescription.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbDescription.Multiline = true;
+            this.tbDescription.Name = "tbDescription";
+            this.tbDescription.Size = new System.Drawing.Size(529, 116);
+            this.tbDescription.TabIndex = 18;
+            // 
+            // btnListDevice
+            // 
+            this.btnListDevice.Location = new System.Drawing.Point(267, 860);
+            this.btnListDevice.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnListDevice.Name = "btnListDevice";
+            this.btnListDevice.Size = new System.Drawing.Size(160, 43);
+            this.btnListDevice.TabIndex = 19;
+            this.btnListDevice.Text = "List Device";
+            this.btnListDevice.UseVisualStyleBackColor = true;
+            this.btnListDevice.Click += new System.EventHandler(this.btnListDevice_Click);
+            // 
+            // btnUpload1
+            // 
+            this.btnUpload1.BackColor = System.Drawing.Color.Transparent;
+            this.btnUpload1.Location = new System.Drawing.Point(53, 181);
+            this.btnUpload1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnUpload1.Name = "btnUpload1";
+            this.btnUpload1.Size = new System.Drawing.Size(100, 28);
+            this.btnUpload1.TabIndex = 20;
+            this.btnUpload1.Text = "Upload";
+            this.btnUpload1.UseVisualStyleBackColor = false;
+            this.btnUpload1.Click += new System.EventHandler(this.btnUpload1_Click);
+            // 
+            // btnUpload6
+            // 
+            this.btnUpload6.BackColor = System.Drawing.Color.Transparent;
+            this.btnUpload6.Location = new System.Drawing.Point(533, 390);
+            this.btnUpload6.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnUpload6.Name = "btnUpload6";
+            this.btnUpload6.Size = new System.Drawing.Size(100, 28);
+            this.btnUpload6.TabIndex = 21;
+            this.btnUpload6.Text = "Upload";
+            this.btnUpload6.UseVisualStyleBackColor = false;
+            this.btnUpload6.Click += new System.EventHandler(this.btnUpload6_Click);
+            // 
+            // btnUpload5
+            // 
+            this.btnUpload5.BackColor = System.Drawing.Color.Transparent;
+            this.btnUpload5.Location = new System.Drawing.Point(293, 390);
+            this.btnUpload5.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnUpload5.Name = "btnUpload5";
+            this.btnUpload5.Size = new System.Drawing.Size(100, 28);
+            this.btnUpload5.TabIndex = 22;
+            this.btnUpload5.Text = "Upload";
+            this.btnUpload5.UseVisualStyleBackColor = false;
+            this.btnUpload5.Click += new System.EventHandler(this.btnUpload5_Click);
+            // 
+            // btnUpload4
+            // 
+            this.btnUpload4.BackColor = System.Drawing.Color.Transparent;
+            this.btnUpload4.Location = new System.Drawing.Point(53, 390);
+            this.btnUpload4.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnUpload4.Name = "btnUpload4";
+            this.btnUpload4.Size = new System.Drawing.Size(100, 28);
+            this.btnUpload4.TabIndex = 23;
+            this.btnUpload4.Text = "Upload";
+            this.btnUpload4.UseVisualStyleBackColor = false;
+            this.btnUpload4.Click += new System.EventHandler(this.btnUpload4_Click);
+            // 
+            // btnUpload3
+            // 
+            this.btnUpload3.BackColor = System.Drawing.Color.Transparent;
+            this.btnUpload3.Location = new System.Drawing.Point(533, 181);
+            this.btnUpload3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnUpload3.Name = "btnUpload3";
+            this.btnUpload3.Size = new System.Drawing.Size(100, 28);
+            this.btnUpload3.TabIndex = 24;
+            this.btnUpload3.Text = "Upload";
+            this.btnUpload3.UseVisualStyleBackColor = false;
+            this.btnUpload3.Click += new System.EventHandler(this.btnUpload3_Click);
+            // 
+            // btnUpload2
+            // 
+            this.btnUpload2.BackColor = System.Drawing.Color.Transparent;
+            this.btnUpload2.Location = new System.Drawing.Point(293, 181);
+            this.btnUpload2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnUpload2.Name = "btnUpload2";
+            this.btnUpload2.Size = new System.Drawing.Size(100, 28);
+            this.btnUpload2.TabIndex = 25;
+            this.btnUpload2.Text = "Upload";
+            this.btnUpload2.UseVisualStyleBackColor = false;
+            this.btnUpload2.Click += new System.EventHandler(this.btnUpload2_Click_1);
+            // 
+            // ListDevicesControl
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.btnUpload2);
+            this.Controls.Add(this.btnUpload3);
+            this.Controls.Add(this.btnUpload4);
+            this.Controls.Add(this.btnUpload5);
+            this.Controls.Add(this.btnUpload6);
+            this.Controls.Add(this.btnUpload1);
+            this.Controls.Add(this.btnListDevice);
+            this.Controls.Add(this.tbDescription);
+            this.Controls.Add(this.tbPrice);
+            this.Controls.Add(this.cmbCondition);
+            this.Controls.Add(this.cmbBrand);
+            this.Controls.Add(this.lblDescription);
+            this.Controls.Add(this.lblPrice);
+            this.Controls.Add(this.lblCondition);
+            this.Controls.Add(this.tbModel);
+            this.Controls.Add(this.lblBrand);
+            this.Controls.Add(this.lblModel);
+            this.Controls.Add(this.pictureBox6);
+            this.Controls.Add(this.pictureBox3);
+            this.Controls.Add(this.pictureBox5);
+            this.Controls.Add(this.pictureBox2);
+            this.Controls.Add(this.pictureBox4);
+            this.Controls.Add(this.pictureBox1);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Name = "ListDevicesControl";
+            this.Size = new System.Drawing.Size(900, 900);
+            this.Load += new System.EventHandler(this.ListDevicesControl_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox pictureBox4;
+        private System.Windows.Forms.PictureBox pictureBox5;
+        private System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.PictureBox pictureBox6;
+        private System.Windows.Forms.PictureBox pictureBox3;
+        private System.Windows.Forms.Label lblModel;
+        private System.Windows.Forms.Label lblBrand;
+        private System.Windows.Forms.TextBox tbModel;
+        private System.Windows.Forms.Label lblCondition;
+        private System.Windows.Forms.Label lblDescription;
+        private System.Windows.Forms.Label lblPrice;
+        private System.Windows.Forms.ComboBox cmbBrand;
+        private System.Windows.Forms.ComboBox cmbCondition;
+        private System.Windows.Forms.TextBox tbPrice;
+        private System.Windows.Forms.TextBox tbDescription;
+        private System.Windows.Forms.Button btnListDevice;
+        private System.Windows.Forms.Button btnUpload1;
+        private System.Windows.Forms.Button btnUpload6;
+        private System.Windows.Forms.Button btnUpload5;
+        private System.Windows.Forms.Button btnUpload4;
+        private System.Windows.Forms.Button btnUpload3;
+        private System.Windows.Forms.Button btnUpload2;
+    }
+}
+
+==== SessionControl.cs ====
+
+﻿using System;
+using System.Windows.Forms;
+
+namespace MobileMarketplace
+{
+    public partial class SessionControl : UserControl
+    {
+        // Define the event
+        public event EventHandler LoginSuccessful;
+
+        public SessionControl()
+        {
+            InitializeComponent();
+        }
+
+        // Call this method when the login is successful
+        protected virtual void OnLoginSuccessful()
+        {
+            LoginSuccessful?.Invoke(this, EventArgs.Empty); // Trigger the event
+        }
+
+        // Your login logic here (example)
+        private void LoginButton_Click(object sender, EventArgs e)
+        {
+            // If the login is successful, trigger the event
+            OnLoginSuccessful();
+        }
+    }
+}
+
+
+==== SessionControl.Designer.cs ====
+
+﻿namespace MobileMarketplace
+{
+    partial class SessionControl
+    {
+        /// <summary> 
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary> 
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Component Designer generated code
+
+        /// <summary> 
+        /// Required method for Designer support - do not modify 
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // SessionControl
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Name = "SessionControl";
+            this.Size = new System.Drawing.Size(984, 737);
+            this.ResumeLayout(false);
+
+        }
+
+        #endregion
+    }
+}
+
+
+==== UserDatabase.cs ====
+
+﻿using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Security.Cryptography;
+using System.Text;
+
+namespace MobileMarketplace
+{
+    public static class UserDatabase
+    {
+        private static readonly string ConnectionString = @"Server=KALI\SQLEXPRESS;Database=Mobilemarketplace;Trusted_Connection=True;";
+
+        private static SqlConnection GetConnection() => new SqlConnection(ConnectionString);
+
+        public static bool VerifyCredentials(string username, string password, out int userId)
+        {
+            userId = -1;
+
+            using (var conn = GetConnection())
+            {
+                conn.Open();
+                string query = @"SELECT UserID FROM Users WHERE Username = @Username AND PasswordHash = @PasswordHash";
+
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    AddParameters(cmd, username, HashPassword(password));
+
+                    var result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        userId = Convert.ToInt32(result);
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public static bool CreateUser(string username, string email, string password)
+        {
+            using (var conn = GetConnection())
+            {
+                conn.Open();
+                string query = @"INSERT INTO Users (Username, Email, PasswordHash) VALUES (@Username, @Email, @PasswordHash)";
+
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    AddParameters(cmd, username, HashPassword(password));
+                    cmd.Parameters.AddWithValue("@Email", email);
+                    cmd.ExecuteNonQuery();
+                    return true;
+                }
+            }
+        }
+
+        public static object ExecuteScalar(string query)
+        {
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                conn.Open();
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    object result = cmd.ExecuteScalar();
+                    return result ?? 0; // Return 0 if NULL
+                }
+            }
+        }
+
+        private static string HashPassword(string password)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                var builder = new StringBuilder();
+                foreach (var b in bytes) builder.Append(b.ToString("x2"));
+                return builder.ToString();
+            }
+        }
+
+        private static void AddParameters(SqlCommand cmd, string username, string hashedPassword)
+        {
+            cmd.Parameters.AddWithValue("@Username", username);
+            cmd.Parameters.AddWithValue("@PasswordHash", hashedPassword);
+        }
+        public static DataTable ExecuteQuery(string query)
+        {
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                conn.Open();
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                    {
+                        DataTable dt = new DataTable();
+                        adapter.Fill(dt);
+                        return dt; // ✅ Returns a DataTable
+                    }
+                }
+            }
+        }
+
+    }
+}
+
+

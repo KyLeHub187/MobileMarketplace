@@ -1,0 +1,217 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E4AC3721-C857-414D-A998-3A6661F3FDB6}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>MobileMarketplace</RootNamespace>
+    <AssemblyName>MobileMarketplace</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="MaterialSkin, Version=2.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MaterialSkin.2.2.3.1\lib\net48\MaterialSkin.dll</HintPath>
+    </Reference>
+    <Reference Include="MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MetroModernUI.1.4.0.0\lib\net\MetroFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="MetroFramework.Design, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MetroModernUI.1.4.0.0\lib\net\MetroFramework.Design.dll</HintPath>
+    </Reference>
+    <Reference Include="MetroFramework.Fonts, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MetroModernUI.1.4.0.0\lib\net\MetroFramework.Fonts.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AllDevicesControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AllDevicesControl.Designer.cs">
+      <DependentUpon>AllDevicesControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BottomAlignedTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CarouselControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CarouselControl.Designer.cs">
+      <DependentUpon>CarouselControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Database.cs" />
+    <Compile Include="HomePageControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="HomePageControl.Designer.cs">
+      <DependentUpon>HomePageControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LoginControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LoginControl.Designer.cs">
+      <DependentUpon>LoginControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProductCardControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ProductCardControl.Designer.cs">
+      <DependentUpon>ProductCardControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProductDetailsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ProductDetailsControl.Designer.cs">
+      <DependentUpon>ProductDetailsControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="sellDevice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="sellDevice.Designer.cs">
+      <DependentUpon>sellDevice.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SessionControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SessionControl.Designer.cs">
+      <DependentUpon>SessionControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserDatabase.cs" />
+    <Compile Include="Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SellDeviceControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SellDeviceControl.Designer.cs">
+      <DependentUpon>SellDeviceControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="AllDevicesControl.resx">
+      <DependentUpon>AllDevicesControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CarouselControl.resx">
+      <DependentUpon>CarouselControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HomePageControl.resx">
+      <DependentUpon>HomePageControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProductCardControl.resx">
+      <DependentUpon>ProductCardControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProductDetailsControl.resx">
+      <DependentUpon>ProductDetailsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SellDeviceControl.resx">
+      <DependentUpon>SellDeviceControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LoginControl.resx">
+      <DependentUpon>LoginControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="SessionControl.resx">
+      <DependentUpon>SessionControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\list device background.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\list device background1.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\lighter_blurred_brick_wall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\green_dot-removebg-preview.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\green_dot-removebg-preview1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\account-icon-8.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Banner1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Phones and Icons.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mobile_phone_promo.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\X_Banner.jpg" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
