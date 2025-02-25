@@ -1,4 +1,6 @@
-﻿namespace MobileMarketplace
+﻿using System.ComponentModel;
+
+namespace MobileMarketplace
 {
     partial class SellDeviceControl
     {
@@ -6,6 +8,11 @@
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
+
+        public SellDeviceControl(IContainer components)
+        {
+            this.components = components;
+        }
 
         #region Component Designer generated code
 

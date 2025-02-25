@@ -120,10 +120,7 @@ namespace MobileMarketplace
                 string condition = row["Condition"].ToString();
                 decimal price = Convert.ToDecimal(row["Price"]);
 
-                // Create a new ProductCardControl (using false to avoid recursion)
-                ProductCardControl card = new ProductCardControl(false);
-                card.SetProductData(name, type, condition, price);
-                flowLayoutPanel1.Controls.Add(card);
+             
             }
         }
 

@@ -12,7 +12,6 @@ C:\Users\chris\source\repos\MobileMarketplace\MobileMarketplace\obj\Debug\Mobile
 C:\Users\chris\source\repos\MobileMarketplace\MobileMarketplace\obj\Debug\MobileMarketplace.MainForm.resources
 C:\Users\chris\source\repos\MobileMarketplace\MobileMarketplace\obj\Debug\MobileMarketplace.HomePageControl.resources
 C:\Users\chris\source\repos\MobileMarketplace\MobileMarketplace\obj\Debug\MobileMarketplace.SellDeviceControl.resources
-C:\Users\chris\source\repos\MobileMarketplace\MobileMarketplace\obj\Debug\MobileMarketplace.ProductCardControl.resources
 C:\Users\chris\source\repos\MobileMarketplace\MobileMarketplace\obj\Debug\MobileMarketplace.CarouselControl.resources
 C:\Users\chris\source\repos\MobileMarketplace\MobileMarketplace\bin\Debug\MaterialSkin.dll
 C:\Users\chris\source\repos\MobileMarketplace\MobileMarketplace\bin\Debug\MetroFramework.Design.dll
@@ -21,3 +20,4 @@ C:\Users\chris\source\repos\MobileMarketplace\MobileMarketplace\bin\Debug\MetroF
 C:\Users\chris\source\repos\MobileMarketplace\MobileMarketplace\obj\Debug\MobileMa.BE2CA121.Up2Date
 C:\Users\chris\source\repos\MobileMarketplace\MobileMarketplace\obj\Debug\MobileMarketplace.AllDevicesControl.resources
 C:\Users\chris\source\repos\MobileMarketplace\MobileMarketplace\obj\Debug\MobileMarketplace.ProductDetailsControl.resources
+C:\Users\chris\source\repos\MobileMarketplace\MobileMarketplace\obj\Debug\MobileMarketplace.ProductsCardControl.resources
