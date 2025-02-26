@@ -27,12 +27,10 @@ namespace MobileMarketplace
         {
             try
             {
-                // 1) Query for main device info (e.g., name, brand, etc.)
                 string detailsQuery = @"
             SELECT 
                 [Name], 
-                [Brand], 
-                [Type],
+                [Brand],                
                 [Model], 
                 [Condition], 
                 [Price],                  
@@ -53,7 +51,6 @@ namespace MobileMarketplace
                     // Fill text-based controls
                     lblName.Text = row["Name"].ToString();
                     lblBrand.Text = row["Brand"].ToString();
-                    lblType.Text = row["Type"].ToString();
                     lblModel.Text = row["Model"].ToString();
                     lblCondition.Text = row["Condition"].ToString();
                     lblPrice.Text = $"${Convert.ToDecimal(row["Price"]):F2}";

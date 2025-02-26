@@ -22,7 +22,7 @@ namespace MobileMarketplace
             this.Click += ProductsCardControl_Click;
             pictureBox.Click += ProductsCardControl_Click;
             lblName.Click += ProductsCardControl_Click;
-            lblType.Click += ProductsCardControl_Click;
+            lblBrand.Click += ProductsCardControl_Click;
             lblCondition.Click += ProductsCardControl_Click;
             lblPrice.Click += ProductsCardControl_Click;
         }
@@ -32,11 +32,11 @@ namespace MobileMarketplace
             ProductClicked?.Invoke(this, e);
         }
 
-        public void SetProductData(int deviceId, string deviceName, string deviceType, string condition, decimal price, string imageUrl = null)
+        public void SetProductData(int deviceId, string deviceName, string deviceBrand, string condition, decimal price, string imageUrl = null)
         {
             DeviceID = deviceId;
             lblName.Text = deviceName;
-            lblType.Text = deviceType;
+            lblBrand.Text = deviceBrand;
             lblCondition.Text = condition;
             lblPrice.Text = $"${price:F2}";
 

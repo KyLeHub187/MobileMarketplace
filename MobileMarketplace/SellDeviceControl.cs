@@ -3,6 +3,8 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Data.SqlClient;
 using static System.ComponentModel.Design.ObjectSelectorEditor;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Xml.Linq;
 
 namespace MobileMarketplace
 {
@@ -11,6 +13,8 @@ namespace MobileMarketplace
     public partial class SellDeviceControl : UserControl
     {
         private int _userId;  // Class-level field to store userId
+        private string _placeholderText = "Enter name...";
+        private bool _isPlaceholderActive = true;
 
         // Constructor that takes userId as a parameter
         public SellDeviceControl(int userId)
@@ -20,6 +24,13 @@ namespace MobileMarketplace
             LoadDevicesForUser();  // Call method to load devices
             this.Dock = DockStyle.Fill;
             this.AutoScroll = true;
+            tbName.Text = _placeholderText;
+            tbName.ForeColor = Color.Gray;
+        }
+
+        private void TbName_Enter(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private void LoadDevicesForUser()
@@ -37,19 +48,25 @@ namespace MobileMarketplace
         private void ListDevicesControl_Load(object sender, EventArgs e)
         {
             pictureBoxes = new PictureBox[] { pictureBox1, pictureBox4, pictureBox5, pictureBox2, pictureBox6, pictureBox3 };
-            
-            cmbBrand.Items.Add("Brand");
-            cmbBrand.Items.Add("Samsung");
-            cmbBrand.Items.Add("Apple");
-            cmbBrand.Items.Add("Xiaomi");
-            cmbBrand.Items.Add("Vivo");
-            cmbBrand.Items.Add("Transsion");
-            cmbBrand.Items.Add("Honor");
-            cmbBrand.Items.Add("Motorola");
-            cmbBrand.Items.Add("Realme");
-            cmbBrand.Items.Add("Huawei");
+
+            panelPage1.Visible = true;
+            panelPage2.Visible = false;
+            btnPhone.Visible = true;
+            btnTablet.Visible = true;
+            lblChooseDevice.Visible = true;
+            lblChooseOs.Visible = false;
+            SetPlaceholder(cmbBrand, "Brand...");
+            SetPlaceholder(cmbCondition, "Condition...");
+            SetPlaceholder(cmbProcessor, "Processer...");
+            SetPlaceholder(cmbAdditionalFeatures, "Features...");
+            SetPlaceholder(cmbStorage, "Storage...");
+            SetPlaceholder(cmbRam, "Ram...");
+            SetPlaceholder(cmbColor, "Color...");
+            SetPlaceholder(tbSellerNotes, "Sellers Notes...");
+
 
             cmbBrand.Text = "Brand";
+
 
             cmbCondition.Items.Add("Condition");
             cmbCondition.Items.Add("New (open box)");
@@ -59,12 +76,28 @@ namespace MobileMarketplace
 
             cmbCondition.Text = "Condition";
 
-            cmbType.Items.Add("Type");
-            cmbType.Items.Add("Phone");
-            cmbType.Items.Add("Tablet");
-            cmbType.Items.Add("Laptop");
+        }
 
-            cmbType.Text = "Type";
+        private void SetPlaceholder(Control control, string placeholder)
+        {
+            control.Text = placeholder;
+            control.ForeColor = Color.Gray;
+            control.Enter += (s, e) =>
+            {
+                if (control.Text == placeholder)
+                {
+                    control.Text = "";
+                    control.ForeColor = Color.Black;
+                }
+            };
+            control.Leave += (s, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(control.Text))
+                {
+                    control.Text = placeholder;
+                    control.ForeColor = Color.Gray;
+                }
+            };
         }
 
         private void UploadImageToPictureBox(PictureBox pictureBox)
@@ -84,7 +117,7 @@ namespace MobileMarketplace
         private void btnUpload1_Click(object sender, EventArgs e)
         {
             UploadImageToPictureBox(pictureBox1);
-        }   
+        }
 
         private void btnUpload3_Click(object sender, EventArgs e)
         {
@@ -111,114 +144,46 @@ namespace MobileMarketplace
             UploadImageToPictureBox(pictureBox2);
         }
 
-        private void btnListDevice_Click(object sender, EventArgs e)
+        private void panelPage1_Paint(object sender, PaintEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(tbModel.Text) ||
-                string.IsNullOrWhiteSpace(cmbBrand.Text) ||
-                string.IsNullOrWhiteSpace(cmbCondition.Text) ||
-                string.IsNullOrWhiteSpace(tbPrice.Text) ||
-                string.IsNullOrWhiteSpace(tbDescription.Text))
-            {
-                MessageBox.Show("Please fill in all fields before listing the device.", "Missing Information",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            // Parse price
-            if (!decimal.TryParse(tbPrice.Text, out decimal price))
-            {
-                MessageBox.Show("Invalid price format.", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            try
-            {
-                int newDeviceId;
-
-                Database db = new Database();
-                SqlConnection conn = new SqlConnection(db.ConnectionString);
-                
-                {
-                    conn.Open();
-
-                    // Insert the device and return the new ID
-                    string query = @"
-        INSERT INTO Devices (UserID, Name, Brand, Type, Model, Condition, Price, Description, DateAdded)
-        VALUES (@UserID, @Name, @Brand, @Type, @Model, @Condition, @Price, @Description, GETDATE());
-        SELECT SCOPE_IDENTITY();";
-
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@UserID", _userId);
-                        cmd.Parameters.AddWithValue("@Name", tbName.Text);
-                        cmd.Parameters.AddWithValue("@Brand", cmbBrand.Text);
-                        cmd.Parameters.AddWithValue("@Type", cmbType.Text);
-                        cmd.Parameters.AddWithValue("@Model", tbModel.Text);
-                        cmd.Parameters.AddWithValue("@Condition", cmbCondition.Text);
-                        cmd.Parameters.AddWithValue("@Price", price);
-                        cmd.Parameters.AddWithValue("@Description", tbDescription.Text);
-
-                        // ExecuteScalar returns the first column of the first row → our new DeviceID
-                        object result = cmd.ExecuteScalar();
-                        newDeviceId = Convert.ToInt32(result);
-                    }
-
-                    // Now insert images into DeviceImages for the newly inserted device
-                    InsertImagesForDevice(conn, newDeviceId);
-
-                    MessageBox.Show("Device listed successfully!", "Success",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                    tbName.Clear();
-                    tbModel.Clear();
-                    cmbBrand.SelectedIndex = 0;
-                    cmbType.SelectedIndex = 0;
-                    cmbCondition.SelectedIndex = 0;
-                    tbPrice.Clear();
-                    tbDescription.Clear();
-                    foreach (PictureBox pb in pictureBoxes)
-                    {
-                        pb.Image = null;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error listing device: {ex.Message}", "Database Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-        private void InsertImagesForDevice(SqlConnection conn, int deviceId)
-        {
-            string insertImageSql = @"
-                INSERT INTO DeviceImages (DeviceID, ImageData, UploadDate)
-                VALUES (@DeviceID, @ImageData, GETDATE())";
-
-            foreach (PictureBox pb in pictureBoxes)
-            {
-                if (pb.Image != null)
-                {
-                    byte[] imageBytes = ConvertImageToBytes(pb.Image);
-
-                    using (SqlCommand cmd = new SqlCommand(insertImageSql, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@DeviceID", deviceId);
-                        cmd.Parameters.AddWithValue("@ImageData", imageBytes);
-                        cmd.ExecuteNonQuery();
-                    }
-                }
-            }
+            SetPlaceholder(tbName, "Device Name...");
+            SetPlaceholder(tbModel, "Device Model...");
+            SetPlaceholder(tbPrice, "Price...");
+            SetPlaceholder(tbDescription, "Device Description...");
         }
 
-      
-        private byte[] ConvertImageToBytes(Image image)
+        private void btnNext_Click(object sender, EventArgs e)
         {
-            using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
-            {
-                image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                return ms.ToArray();
-            }
+            panelPage1.Visible = false;
+            panelPage2.Visible = true;
+            btnListDevice.Visible = true;
+            btnNext.Visible = false;
+        }
+
+        private void btnPhone_Click(object sender, EventArgs e)
+        {
+            btnPhone.Visible = false;
+            btnTablet.Visible = false;
+            lblChooseDevice.Visible = false;
+            lblChooseOs.Visible = true;
+            btnIos.Visible = true;
+            btnAndroid.Visible = true;
+            lblBack.Visible = true;
+        }
+
+        private void btnTablet_Click(object sender, EventArgs e)
+        {
+            btnPhone.Visible = false;
+            btnTablet.Visible = false;
+            lblChooseDevice.Visible = false;
+            lblChooseOs.Visible = true;
+            btnIos.Visible = true;
+            btnAndroid.Visible = true;
+            lblBack.Visible = true;
         }
     }
 }
+
+
+
+     

@@ -41,7 +41,7 @@ namespace MobileMarketplace
             try
             {
                 string query = $@"
-                    SELECT TOP {MaxProductCards} [DeviceID], [Name], [Type], [Condition], [Price]
+                    SELECT TOP {MaxProductCards} [DeviceID], [Name], [Brand], [Condition], [Price]
                     FROM Devices 
                     ORDER BY DateAdded DESC";
 
@@ -53,13 +53,13 @@ namespace MobileMarketplace
                 {
                     int deviceId = Convert.ToInt32(row["DeviceID"]);
                     string name = row["Name"].ToString();
-                    string type = row["Type"].ToString();
+                    string brand = row["Brand"].ToString();
                     string condition = row["Condition"].ToString();
                     decimal price = Convert.ToDecimal(row["Price"]);
 
                     var card = new ProductsCardControl();
 
-                    card.SetProductData(deviceId, name, type, condition, price);
+                    card.SetProductData(deviceId, name, brand, condition, price);
 
                     card.ProductClicked += (s, e) =>
                     {

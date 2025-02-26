@@ -30,7 +30,7 @@
         {
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.lblName = new System.Windows.Forms.Label();
-            this.lblType = new System.Windows.Forms.Label();
+            this.lblBrand = new System.Windows.Forms.Label();
             this.lblCondition = new System.Windows.Forms.Label();
             this.lblPrice = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
@@ -57,14 +57,14 @@
             this.lblName.Text = "Name";
             this.lblName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // lblType
+            // lblBrand
             // 
-            this.lblType.Location = new System.Drawing.Point(0, 134);
-            this.lblType.Name = "lblType";
-            this.lblType.Size = new System.Drawing.Size(150, 20);
-            this.lblType.TabIndex = 6;
-            this.lblType.Text = "Type";
-            this.lblType.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblBrand.Location = new System.Drawing.Point(0, 134);
+            this.lblBrand.Name = "lblBrand";
+            this.lblBrand.Size = new System.Drawing.Size(150, 20);
+            this.lblBrand.TabIndex = 6;
+            this.lblBrand.Text = "Brand";
+            this.lblBrand.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblCondition
             // 
@@ -92,7 +92,7 @@
             this.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.Controls.Add(this.lblPrice);
             this.Controls.Add(this.lblCondition);
-            this.Controls.Add(this.lblType);
+            this.Controls.Add(this.lblBrand);
             this.Controls.Add(this.lblName);
             this.Controls.Add(this.pictureBox);
             this.Location = new System.Drawing.Point(25, 0);
@@ -107,7 +107,7 @@
 
         private System.Windows.Forms.PictureBox pictureBox;
         private System.Windows.Forms.Label lblName;
-        private System.Windows.Forms.Label lblType;
+        private System.Windows.Forms.Label lblBrand;
         private System.Windows.Forms.Label lblCondition;
         private System.Windows.Forms.Label lblPrice;
     }

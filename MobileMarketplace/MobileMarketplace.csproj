@@ -75,6 +75,12 @@
       <DependentUpon>CarouselControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Database.cs" />
+    <Compile Include="edit.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="edit.Designer.cs">
+      <DependentUpon>edit.cs</DependentUpon>
+    </Compile>
     <Compile Include="HomePageControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -137,6 +143,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CarouselControl.resx">
       <DependentUpon>CarouselControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="edit.resx">
+      <DependentUpon>edit.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="HomePageControl.resx">
       <DependentUpon>HomePageControl.cs</DependentUpon>
