@@ -105,7 +105,6 @@
             this.btnApplyFilters.TabIndex = 6;
             this.btnApplyFilters.Text = "Apply Filters";
             this.btnApplyFilters.UseVisualStyleBackColor = true;
-            this.btnApplyFilters.Click += new System.EventHandler(this.btnApplyFilters_Click);
             // 
             // AllDevicesControl
             // 

@@ -157,7 +157,45 @@ namespace MobileMarketplace
             panelPage1.Visible = false;
             panelPage2.Visible = true;
             btnListDevice.Visible = true;
-            btnNext.Visible = false;
+            
+        }
+
+   
+        
+
+        private void lblBack_Click(object sender, EventArgs e)
+        {
+            btnPhone.Visible = true;
+            btnTablet.Visible = true;
+            lblChooseDevice.Visible = true;
+            btnAndroid.Visible = false;
+            btnIos.Visible = false;
+
+        }
+
+     
+
+        private void btnAndroid_Click(object sender, EventArgs e)
+        {
+            cmbBrand.Items.Clear(); // Clear previous brands
+
+            cmbBrand.Items.Add("Samsung");
+            cmbBrand.Items.Add("Google");
+            cmbBrand.Items.Add("Huawei");
+            cmbBrand.Items.Add("OnePlus");
+            cmbBrand.Items.Add("Xiaomi");
+            cmbBrand.Items.Add("Oppo");
+            cmbBrand.Items.Add("Vivo");
+            cmbBrand.Items.Add("LG");
+            cmbBrand.Items.Add("Motorola");
+            cmbBrand.Items.Add("Sony");
+            cmbBrand.Items.Add("Nokia");
+            cmbBrand.Items.Add("Realme");
+            cmbBrand.Items.Add("Asus");
+            cmbBrand.Items.Add("Lenovo");
+            cmbBrand.Items.Add("ZTE");
+            cmbBrand.Items.Add("Alcatel");
+            cmbBrand.Items.Add("Meizu");
         }
 
         private void btnPhone_Click(object sender, EventArgs e)
@@ -171,6 +209,13 @@ namespace MobileMarketplace
             lblBack.Visible = true;
         }
 
+        private void btnIos_Click(object sender, EventArgs e)
+        {
+            cmbBrand.Items.Clear();
+
+            cmbBrand.Items.Add("Apple");
+        }
+
         private void btnTablet_Click(object sender, EventArgs e)
         {
             btnPhone.Visible = false;
@@ -180,6 +225,81 @@ namespace MobileMarketplace
             btnIos.Visible = true;
             btnAndroid.Visible = true;
             lblBack.Visible = true;
+        }
+
+        private void lblBack_Click_1(object sender, EventArgs e)
+        {
+            btnPhone.Visible = true;
+            btnTablet.Visible = true;
+            lblChooseDevice.Visible = true;
+            lblChooseOs.Visible = false;
+        }
+
+        private void btnPhone1_Click(object sender, EventArgs e)
+        {
+            btnPhone.Visible = false;
+            btnTablet.Visible = false;
+            lblChooseDevice.Visible = false;
+            lblChooseOs.Visible = true;
+            btnIos.Visible = true;
+            btnAndroid.Visible = true;
+            lblBack.Visible = true;
+        }
+
+        private void btnTblet1_Click(object sender, EventArgs e)
+        {
+            btnPhone.Visible = false;
+            btnTablet.Visible = false;
+            lblChooseDevice.Visible = false;
+            lblChooseOs.Visible = true;
+            btnIos.Visible = true;
+            btnAndroid.Visible = true;
+            lblBack.Visible = true;
+        }
+
+        private void btnIos1_Click(object sender, EventArgs e)
+        {
+            cmbBrand.Items.Clear();
+
+            cmbBrand.Items.Add("Apple");
+        }
+
+        private void btnAndroid1_Click(object sender, EventArgs e)
+        {
+            cmbBrand.Items.Clear(); // Clear previous brands
+
+            cmbBrand.Items.Add("Samsung");
+            cmbBrand.Items.Add("Google");
+            cmbBrand.Items.Add("Huawei");
+            cmbBrand.Items.Add("OnePlus");
+            cmbBrand.Items.Add("Xiaomi");
+            cmbBrand.Items.Add("Oppo");
+            cmbBrand.Items.Add("Vivo");
+            cmbBrand.Items.Add("LG");
+            cmbBrand.Items.Add("Motorola");
+            cmbBrand.Items.Add("Sony");
+            cmbBrand.Items.Add("Nokia");
+            cmbBrand.Items.Add("Realme");
+            cmbBrand.Items.Add("Asus");
+            cmbBrand.Items.Add("Lenovo");
+            cmbBrand.Items.Add("ZTE");
+            cmbBrand.Items.Add("Alcatel");
+            cmbBrand.Items.Add("Meizu");
+        }
+
+        private void lblBack1_Click(object sender, EventArgs e)
+        {
+            btnPhone.Visible = true;
+            btnTablet.Visible = true;
+            lblChooseDevice.Visible = true;
+            lblChooseOs.Visible = false;
+            
+        }
+
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            panelPage1.Visible = true;
+            panelPage2.Visible = false;
         }
     }
 }

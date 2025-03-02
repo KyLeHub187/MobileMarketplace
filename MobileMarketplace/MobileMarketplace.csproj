@@ -111,12 +111,6 @@
     <Compile Include="ProductsCardControl.Designer.cs">
       <DependentUpon>ProductsCardControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="sellDevice.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="sellDevice.Designer.cs">
-      <DependentUpon>sellDevice.cs</DependentUpon>
-    </Compile>
     <Compile Include="SessionControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
